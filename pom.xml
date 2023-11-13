@@ -3,22 +3,12 @@
   <groupId>toby-spring</groupId>
   <artifactId>toby-spring</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>war</packaging>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
-        <configuration>
-          <release>16</release>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>3.2.3</version>
-      </plugin>
-    </plugins>
-  </build>
+	<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+	</properties>
+	<packaging>war</packaging>
+
   <dependencies>
   	<!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
 	<dependency>
@@ -32,8 +22,25 @@
 	    <artifactId>spring-webmvc</artifactId>
 	    <version>5.3.18</version>
 	</dependency>
-	
-	<!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
+
+  <!-- Spring Core 모듈 -->
+  <dependency>
+	  <groupId>org.springframework</groupId>
+	  <artifactId>spring-core</artifactId>
+	  <version>5.3.18</version> <!-- 사용하는 Spring 버전에 따라 버전을 변경하세요 -->
+  </dependency>
+
+  <!-- Spring Test 모듈 -->
+	  <!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
+  <dependency>
+	  <groupId>org.springframework</groupId>
+	  <artifactId>spring-test</artifactId>
+	  <version>5.3.8</version>
+	  <scope>test</scope>
+  </dependency>
+
+
+	  <!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
 	<dependency>
 	    <groupId>org.springframework</groupId>
 	    <artifactId>spring-jdbc</artifactId>
@@ -46,7 +53,14 @@
 	    <artifactId>mysql-connector-java</artifactId>
 	    <version>8.0.28</version>
 	</dependency>
-	
-  	
+	<!-- https://mvnrepository.com/artifact/junit/junit -->
+	<dependency>
+	  <groupId>junit</groupId>
+	  <artifactId>junit</artifactId>
+	  <version>4.12</version>
+	  <scope>test</scope>
+	</dependency>
+
+
   </dependencies>
 </project>

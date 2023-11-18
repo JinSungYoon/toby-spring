@@ -1,5 +1,6 @@
 package springbook.user;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.Before;
@@ -7,9 +8,13 @@ import org.junit.Test;
 
 import org.junit.runner.RunWith;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
+import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
+import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -19,17 +24,22 @@ import springbook.user.domain.User;
 import javax.sql.DataSource;
 
 import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 
-// ½ºÇÁ¸µÀÇ Å×½ºÆ® ÄÁÅØ½ºÆ® ÇÁ·¹ÀÓ¿öÅ©ÀÇ JUnit È®Àå±â´É ÁöÁ¤
+// ìŠ¤í”„ë§ì˜ í…ŒìŠ¤íŠ¸ ì»¨í…ìŠ¤íŠ¸ í”„ë ˆì„ì›Œí¬ì˜ JUnit í™•ì¥ê¸°ëŠ¥ ì§€ì •
 @RunWith(SpringJUnit4ClassRunner.class)
-// Å×½ºÆ® ÄÁÅØ½ºÆ®°¡ ÀÚµ¿À¸·Î ¸¸µé¾îÁÙ ¾ÖÇÃ¸®ÄÉÀÌ¼Ç ÄÁÅØ½ºÆ®ÀÇ À§Ä¡ ÁöÁ¤
+// í…ŒìŠ¤íŠ¸ ì»¨í…ìŠ¤íŠ¸ê°€ ìë™ìœ¼ë¡œ ë§Œë“¤ì–´ì¤„ ì• í”Œë¦¬ì¼€ì´ì…˜ ì»¨í…ìŠ¤íŠ¸ì˜ ìœ„ì¹˜ ì§€ì •
 @ContextConfiguration(locations="/test-applicationContext.xml")
-// Å×½ºÆ® ¸Ş¼Òµå¿¡¼­ ¾ÖÇÁ¸®ÄÉÀÌ¼Ç ÄÁÅØ½ºÆ®ÀÇ ±¸¼ºÀÌ³ª »óÅÂ¸¦ º¯°æÇÑ´Ù´Â °ÍÀ» Å×½ºÆ® ÄÁÅØ½ºÆ® ÇÁ·¹ÀÓ¿öÅ©¿¡ ¾Ë·ÁÁØ´Ù.
+// í…ŒìŠ¤íŠ¸ ë©”ì†Œë“œì—ì„œ ì• í”„ë¦¬ì¼€ì´ì…˜ ì»¨í…ìŠ¤íŠ¸ì˜ êµ¬ì„±ì´ë‚˜ ìƒíƒœë¥¼ ë³€ê²½í•œë‹¤ëŠ” ê²ƒì„ í…ŒìŠ¤íŠ¸ ì»¨í…ìŠ¤íŠ¸ í”„ë ˆì„ì›Œí¬ì— ì•Œë ¤ì¤€ë‹¤.
 //@DirtiesContext
 public class UserDaoTest {
 
+        @Autowired
         private UserDao dao;
+        @Autowired
+        private DataSource dataSource;
+
         private User user1;
         private User user2;
         private User user3;
@@ -37,16 +47,12 @@ public class UserDaoTest {
 
         @Before
         public void setUp(){
-            this.dao = new UserDao();
-            DataSource dataSource = new SingleConnectionDataSource("jdbc:mysql://localhost/testdb","root","0000",true);
-            dao.setDataSource(dataSource);
-
-            this.user1 = new User("gyumee","¹Ú¼ºÃ¶","springno1");
-            this.user2 = new User("leegw700","ÀÌ±æ¿ø","springno2");
-            this.user3 = new User("bumjin","¹Ú¹üÁø","springno3");
+            this.user1 = new User("gyumee","ï¿½Ú¼ï¿½Ã¶","springno1");
+            this.user2 = new User("leegw700","ï¿½Ì±ï¿½ï¿½","springno2");
+            this.user3 = new User("bumjin","ï¿½Ú¹ï¿½ï¿½ï¿½","springno3");
         }
         @Test
-        public void addAndGet() {
+        public void addAndGet(){
 
             dao.deleteAll();
             assertThat(dao.getCount(),is(0));
@@ -65,7 +71,7 @@ public class UserDaoTest {
         }
 
         @Test
-        public void count(){
+        public void count() {
 
             dao.deleteAll();
             assertThat(dao.getCount(),is(0));
@@ -89,7 +95,7 @@ public class UserDaoTest {
         }
 
     @Test
-    public void getAll() {
+    public void getAll(){
         dao.deleteAll();
 
         List<User> user0 = dao.getAll();
@@ -112,6 +118,26 @@ public class UserDaoTest {
         checkSameUser(user1,users3.get(1));
         checkSameUser(user2,users3.get(2));
     }
+
+    @Test(expected= DataAccessException.class)
+    public void duplicateKey(){
+        dao.deleteAll();
+        dao.add(user1);
+        dao.add(user1);
+    }
+
+    @Test
+    public void sqlExceptionTranslate(){
+            dao.deleteAll();
+            try{
+                dao.add(user1);
+                dao.add(user1);
+            }catch(DuplicateKeyException ex){
+                SQLException sqlEx = (SQLException) ex.getCause();
+                SQLExceptionTranslator set = new SQLErrorCodeSQLExceptionTranslator(this.dataSource);
+            }
+    }
+
 
     private void checkSameUser(User user1,User user2){
         assertThat(user1.getId(),is(user2.getId()));

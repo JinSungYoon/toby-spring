@@ -24,7 +24,7 @@
 	</bean>
 
 	<bean id="mailSender" class="springbook.user.service.DummyMailSender">
-		<property name="host" value="mail.server.com"/>
+
 	</bean>
 
 </beans>

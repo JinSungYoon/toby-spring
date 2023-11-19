@@ -9,15 +9,10 @@ import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
 
-import javax.sql.DataSource;
-
 import java.util.List;
 
 
 public class UserService {
-
-    private DataSource dataSource;
-
 
     UserDao userDao;
 
@@ -27,10 +22,6 @@ public class UserService {
     public static int MIN_RECCOMENDED_FOR_GOLD = 30;
 
     private MailSender mailSender;
-
-    public void setDataSource(DataSource dataSource){
-        this.dataSource = dataSource;
-    }
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;

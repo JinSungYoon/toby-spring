@@ -39,8 +39,7 @@
 	  <scope>test</scope>
   </dependency>
 
-
-	  <!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
+	<!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
 	<dependency>
 	    <groupId>org.springframework</groupId>
 	    <artifactId>spring-jdbc</artifactId>
@@ -67,6 +66,27 @@
 	  <artifactId>assertj-core</artifactId>
 	  <version>3.20.2</version>
 	  <scope>test</scope>
+  </dependency>
+
+  <!-- Spring Framework Core -->
+  <dependency>
+	  <groupId>org.springframework</groupId>
+	  <artifactId>spring-context</artifactId>
+	  <version>5.3.18</version> <!-- Spring Framework 버전에 맞게 설정 -->
+  </dependency>
+
+  <!-- Spring Email Support -->
+  <dependency>
+	  <groupId>org.springframework</groupId>
+	  <artifactId>spring-context-support</artifactId>
+	  <version>5.3.18</version> <!-- Spring Framework 버전에 맞게 설정 -->
+  </dependency>
+
+  <!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api -->
+  <dependency>
+	  <groupId>javax.mail</groupId>
+	  <artifactId>javax.mail-api</artifactId>
+	  <version>1.6.2</version>
   </dependency>
 
   </dependencies>
